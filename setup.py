@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='gopay-django-api',
-    version='0.1',
+    version='0.2-dev',
     license='MIT',
     description='GoPay implemenation of API for Django',
     author='Jan Papousek',
@@ -11,7 +11,8 @@ setup(
     packages=[
         'gopay_django_api',
         'gopay_django_api.management',
-        'gopay_django_api.management.commands'
+        'gopay_django_api.management.commands',
+        'gopay_django_api.migrations',
     ],
     install_requires=['gopay']
 )
