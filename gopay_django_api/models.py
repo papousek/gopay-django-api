@@ -14,8 +14,6 @@ def payments():
         'clientSecret': settings.GOPAY_CLIENT_SECRET,
         'isProductionMode': True if not hasattr(settings, 'GOPAY_IS_PRODUCTION') else settings.GOPAY_IS_PRODUCTION,
     }
-    from pprint import pprint
-    pprint(config)
     return gopay.payments(config)
 
 
@@ -88,8 +86,6 @@ class PaymentManager(models.Manager):
         return self._create_payment(command)
 
     def _create_payment(self, command):
-        from pprint import pprint
-        pprint(command)
         response = payments().create_payment(command)
         if response.status_code != 200:
             raise Exception('There is an error during creating payment: {}.'.format(response.json))
