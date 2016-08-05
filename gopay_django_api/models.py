@@ -19,16 +19,17 @@ def payments():
 
 class PaymentManager(models.Manager):
 
-    def refresh_status(self, payment):
+    def refresh_status(self, payment, force=False):
         response = payments().get_status(payment.gopay_id)
         if response.status_code != 200:
             raise Exception('There is an error during retrieving status of payment {}: {}.'.format(payment.gopay_id, response.json))
         status_before = copy.deepcopy(payment.status)
-        payment.status = response.json
-        payment.state = response.json['state']
-        payment.refresh_counter += 1
-        payment.save()
-        payment_changed(sender=Payment, instance=payment, previous_status=status_before)
+        if force or payment.is_status_different(response.json):
+            payment.status = response.json
+            payment.state = response.json['state']
+            payment.refresh_counter += 1
+            payment.save()
+            payment_changed.send(sender=Payment, instance=payment, previous_status=status_before)
         return payment
 
     def create_contact(self, email, first_name=None, last_name=None, phone_number=None):
@@ -107,6 +108,10 @@ class Payment(models.Model):
     _status = models.TextField()
     _command = models.TextField()
 
+    def is_status_different(self, status):
+        status_str = json.dumps(status, sort_keys=True)
+        return self._status != status_str
+
     def _set_command(self, value):
         self._command = json.dumps(dict(value))
 
@@ -114,11 +119,12 @@ class Payment(models.Model):
         return json.loads(self._command)
 
     def _set_status(self, value):
-        self._status = json.dumps(value)
+        self._status = json.dumps(value, sort_keys=True)
 
     def _get_status(self):
         return json.loads(self._status)
 
     command = property(_get_command, _set_command)
     status = property(_get_status, _set_status)
+
     objects = PaymentManager()

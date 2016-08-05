@@ -14,5 +14,5 @@ setup(
         'gopay_django_api.management.commands',
         'gopay_django_api.migrations',
     ],
-    install_requires=['gopay']
+    install_requires=['clint', 'gopay']
 )
