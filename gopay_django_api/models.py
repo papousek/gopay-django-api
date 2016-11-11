@@ -32,20 +32,22 @@ class PaymentManager(models.Manager):
             payment_changed.send(sender=Payment, instance=payment, previous_status=status_before)
         return payment
 
-    def create_contact(self, email, first_name=None, last_name=None, phone_number=None):
+    def create_contact(self, email=None, first_name=None, last_name=None, phone_number=None):
         """
         Create a contant which is later passed to payment.
         """
-        result = {'email': email}
+        result = {}
+        if email:
+            result['email'] = email
         if first_name is not None:
             result['first_name'] = first_name
         if last_name is not None:
             result['last_name'] = last_name
         if phone_number is not None:
             result['phone_number'] = phone_number
-        return result
+        return result if len(result) > 0 else None
 
-    def create_single_payment(self, contact, order_number, order_description, order_items, amount, return_url, currency=None, lang=None, additional_params=None):
+    def create_single_payment(self, order_number, order_description, order_items, amount, return_url, contact=None, currency=None, lang=None, additional_params=None):
         """
         Create a single payment.
 
@@ -80,10 +82,11 @@ class PaymentManager(models.Manager):
     def create_payment(self, contact, command):
         command = copy.deepcopy(command)
         command['payer'] = {
-            'contact': contact,
             'default_payment_instrument': settings.GOPAY_DEFAULT_PAYMENT_INSTRUMENT,
             'allowed_payment_instruments': settings.GOPAY_ALLOWED_PAYMENT_INSTRUMENTS,
         }
+        if contact is not None:
+            command['payer']['contact'] = contact
         return self._create_payment(command)
 
     def _create_payment(self, command):
