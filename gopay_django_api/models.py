@@ -85,6 +85,10 @@ class PaymentManager(models.Manager):
             'default_payment_instrument': settings.GOPAY_DEFAULT_PAYMENT_INSTRUMENT,
             'allowed_payment_instruments': settings.GOPAY_ALLOWED_PAYMENT_INSTRUMENTS,
         }
+        if hasattr(settings, 'GOPAY_ALLOWED_SWIFTS'):
+            command['payer']['allowed_swifts'] = settings.GOPAY_ALLOWED_SWIFTS
+        if hasattr(settings, 'GOPAY_DEFAULT_SWIFT'):
+            command['payer']['default_swift'] = settings.GOPAY_DEFAULT_SWIFT
         if contact is not None:
             command['payer']['contact'] = contact
         return self._create_payment(command)
