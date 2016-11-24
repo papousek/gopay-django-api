@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='gopay-django-api',
-    version='0.5',
+    version='0.6-dev',
     license='MIT',
     description='GoPay implemenation of API for Django',
     author='Jan Papousek',
