@@ -1,7 +1,8 @@
 from .signals import payment_changed
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import models
+from django.utils.formats import date_format
 import copy
 import gopay
 import json
@@ -135,3 +136,14 @@ class Payment(models.Model):
     status = property(_get_status, _set_status)
 
     objects = PaymentManager()
+
+    def __str__(self):
+        return (
+            self.state + ' (' +
+            date_format(self.updated, format='DATETIME_FORMAT', use_l10n=True)
+            + ')')
+
+    class Meta:
+        ordering = ['-created']
+        verbose_name = 'Platba GoPay'
+        verbose_name_plural = 'Platby GoPay'
