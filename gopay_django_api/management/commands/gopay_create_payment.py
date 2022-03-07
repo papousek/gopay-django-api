@@ -6,36 +6,35 @@ from pprint import pprint
 
 class Command(BaseCommand):
 
-    option_list = BaseCommand.option_list + (
-        make_option(
+    def add_arguments(self, parser):
+        parser.add_argument(
             '--email',
-            dest='email'
-        ),
-        make_option(
+            dest='email',
+        )
+        parser.add_argument(
             '--order-number',
-            dest='order_number'
-        ),
-        make_option(
+            dest='order_number',
+        )
+        parser.add_argument(
             '--order-description',
             dest='order_description',
-            default='No description'
-        ),
-        make_option(
+            default='No description',
+        )
+        parser.add_argument(
             '--amount',
             dest='amount',
-            type=float
-        ),
-        make_option(
+            type=float,
+        )
+        parser.add_argument(
             '--return_url',
-            dest='return_url'
-        ),
-        make_option(
+            dest='return_url',
+        )
+        parser.add_argument(
             '--order-item',
             dest='order_items',
             action='append',
-            default=[]
+            default=[],
         )
-    )
 
     def handle(self, *args, **options):
         payment = Payment.objects.create_single_payment(
@@ -46,4 +45,4 @@ class Command(BaseCommand):
             options['amount'],
             options['return_url']
         )
-        pprint(payment.status)
+        print(payment)

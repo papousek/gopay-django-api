@@ -1,7 +1,7 @@
-from django.conf.urls import url
+from django.urls import path
 from . import views
 
 
 urlpatterns = [
-    url("^notify/$", views.notify, name="gopay_notify"),
+    path("notify/", views.notify, name="gopay_notify"),
 ]

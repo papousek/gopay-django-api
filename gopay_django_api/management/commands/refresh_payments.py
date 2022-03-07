@@ -7,19 +7,18 @@ from optparse import make_option
 
 class Command(BaseCommand):
 
-    option_list = BaseCommand.option_list + (
-        make_option(
+    def add_arguments(self, parser):
+        parser.add_argument(
             '--state',
             dest='state',
-            default=None
-        ),
-        make_option(
+            default=None,
+        )
+        parser.add_argument(
             '--force',
             dest='force',
             action='store_true',
-            default=False
-        ),
-    )
+            default=False,
+        )
 
     def handle(self, *args, **options):
         with transaction.atomic():
